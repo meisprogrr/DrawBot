@@ -21,6 +21,10 @@ def getPalette(app):
     colors = [int(t) for t in open(colorFiles).read().split()]
     return [colors, coordinates]
 
+def saveCoordinatesToFile(coordinates):
+    with open("garticCoordinates.txt", "w") as f:
+        for c in coordinates:
+            f.write(f"{c[0]},{c[1]}\n")
 
 def getMouseCoordinatesOnce(x, y, button, pressed):
     if not pressed:
@@ -36,9 +40,10 @@ def getMouseCoordinatesTwice(x, y, button, pressed):
             start = (x,y)
         elif clicked == 2:
             clicked = 0
-            queue.put([start, (x,y)])
+            coordinates = [start, (x,y)]
+            saveCoordinatesToFile(coordinates)
+            queue.put(coordinates)
             return False
-
 
 def getNextMouseClickPositionCoordinates():
     listener = Listener(on_click=getMouseCoordinatesOnce)
@@ -49,4 +54,3 @@ def getBounds():
     listener = Listener(on_click=getMouseCoordinatesTwice)
     listener.start()
     return queue.get()
-        
